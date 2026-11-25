@@ -8,7 +8,7 @@ TMF la website thuong mai dien tu thoi trang unisex phong cach Seoul Earth. Proj
 ## Tech Stack
 | Layer | Cong nghe |
 |-------|-----------|
-| Frontend | React 18 + Vite + Tailwind CSS v3 + Zustand |
+| Frontend | React 18 + Vite + Tailwind CSS v3 + Zustand + React Router |
 | Backend | Node.js + Express |
 | Database | MongoDB (Mongoose) |
 | Cache/Queue | Redis + BullMQ (chua tich hop) |
@@ -25,20 +25,26 @@ TMF_Official/
 ├── docs/
 │   ├── SUMMARY.md            # File nay
 │   ├── CODE_RULES.md         # Quy tac code
-│   └── design/               # File design goc
+│   └── design/               # File design goc (V3 + V4)
 ├── packages/
 │   ├── client/               # Frontend React
 │   │   ├── src/
+│   │   │   ├── pages/        # 12 page components (SPA routing)
+│   │   │   │   ├── HomePage, CatalogPage, ProductPage
+│   │   │   │   ├── LookbookPage, WishlistPage
+│   │   │   │   ├── CartPage, CheckoutPage, SuccessPage
+│   │   │   │   └── LoginPage, RegisterPage, AccountPage, OrdersPage
 │   │   │   ├── components/   # React components
-│   │   │   │   ├── layout/   # PromoBar, Navbar, Footer
+│   │   │   │   ├── layout/   # PromoBar, Navbar, RouteBar, Footer, ScrollToTop
 │   │   │   │   ├── home/     # Hero, PaletteStrip, Categories, Lookbook, Manifesto, Perks
-│   │   │   │   ├── shop/     # ProductGrid, ProductCard, Filters
-│   │   │   │   ├── cart/     # CartDrawer
+│   │   │   │   ├── shop/     # ProductGrid, ProductCard, ProductVCard, Filters, FilterPanel
+│   │   │   │   ├── cart/     # CartDrawer, CartRow, OrderSummary
 │   │   │   │   ├── product/  # ProductDetail, SizeSelector
+│   │   │   │   ├── account/  # AccountMenu, OrderCard
 │   │   │   │   ├── search/   # SearchModal
 │   │   │   │   ├── ui/       # Modal, Toast, RuleButton
 │   │   │   │   └── svg/      # GarmentSVG, EditorialSVG
-│   │   │   ├── store/        # Zustand stores (cart, product, ui)
+│   │   │   ├── store/        # Zustand stores (cart, product, ui, auth)
 │   │   │   ├── data/         # Fallback products, section rules
 │   │   │   └── utils/        # Format helpers
 │   │   └── ...config files
@@ -51,6 +57,22 @@ TMF_Official/
 │       │   └── middleware/   # Error handler
 │       └── seed/             # Seed 8 san pham
 ```
+
+## Routing (React Router)
+| Route | Page | Mo ta |
+|-------|------|-------|
+| / | HomePage | Landing page day du |
+| /catalog | CatalogPage | Product listing voi sidebar filter (danh muc, gia, mau, search) |
+| /product/:id | ProductPage | Chi tiet san pham (thumbnails, size, accordion, related) |
+| /lookbook | LookbookPage | 3 editorial looks (olive, denim, rose) |
+| /wishlist | WishlistPage | Danh sach yeu thich |
+| /cart | CartPage | Gio hang day du (+/- qty, coupon, summary) |
+| /checkout | CheckoutPage | Form 3 buoc (lien he, dia chi, thanh toan) |
+| /login | LoginPage | Dang nhap demo |
+| /register | RegisterPage | Dang ky demo |
+| /account | AccountPage | Thong tin ca nhan + don hang gan day |
+| /orders | OrdersPage | Danh sach don hang + timeline tracking |
+| /success | SuccessPage | Xac nhan dat hang thanh cong |
 
 ## API Endpoints
 | Method | Endpoint | Mo ta |
@@ -65,13 +87,31 @@ TMF_Official/
 | POST | /api/orders | Dat hang |
 | GET | /api/orders/:id | Xem don hang |
 
-## Tinh nang da hoan thanh (Giai doan 1)
+## Zustand Stores
+| Store | Chuc nang |
+|-------|-----------|
+| productStore | products[], fetchProducts(), filter, sort, search, favorites, getFiltered() |
+| cartStore | items[], addItem(), removeItem(), updateQty(), clearCart(), getCount(), getSubtotal() |
+| uiStore | productDetailId, searchOpen, toast, openProductDetail(), showToast() |
+| authStore | user, login(), register(), logout(), updateProfile(), isLoggedIn() |
+
+## Tinh nang da hoan thanh
 - [x] Landing page day du theo design FORM. Seoul Earth V3
+- [x] Multi-page SPA voi React Router (12 trang tu design V4)
+- [x] Product catalog voi sidebar filter (danh muc, gia, mau sac, search)
+- [x] Product detail page (doi mau, chon size, accordion, related products)
+- [x] Lookbook page (3 editorial looks)
+- [x] Wishlist page
+- [x] Cart page day du (qty +/-, coupon FORM10, order summary)
+- [x] Checkout page (3-panel form, COD/chuyen khoan)
+- [x] Order success + order tracking page (timeline 4 buoc)
+- [x] Login/Register demo (localStorage)
+- [x] Account page (profile, don hang gan day)
+- [x] RouteBar navigation
 - [x] SVG garment illustrations (tee, polo, shirt, jeans, hoodie, cardigan, bag)
 - [x] SVG editorial illustrations (hero, lookbook)
-- [x] Product grid voi filter va sort
-- [x] Product detail modal
-- [x] Cart drawer (localStorage)
+- [x] Product detail modal (homepage)
+- [x] Cart drawer (homepage - localStorage)
 - [x] Search modal
 - [x] Nut Quy tac (RuleButton) tren moi section
 - [x] Backend REST API (Products, Cart, Orders)
@@ -84,7 +124,7 @@ TMF_Official/
 - [ ] Giai doan 2: Queue & Worker (BullMQ, Order Worker, Email Worker)
 - [ ] Giai doan 3: Cron Job & Outbox (Nhac gio hang bo quen, Bao cao ngay)
 - [ ] Giai doan 4: Sandbox & Infra (Docker profiles, Sandbox mode)
-- [ ] Giai doan 5: Admin Dashboard (Chuyen tu Electron sang Web)
+- [ ] Giai doan 5: Admin Dashboard
 
 ## Cach chay
 ```bash
@@ -105,4 +145,3 @@ npm run dev:client
 
 # Truy cap: http://localhost:3000
 ```
-
