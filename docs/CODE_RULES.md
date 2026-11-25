@@ -24,6 +24,7 @@
 - API response: `{ success: true/false, data/message }`
 
 ## 3. Frontend rules
+- Dev server chay tai port mac dinh `3000` (cau hinh trong `packages/client/vite.config.js`)
 - Dung **Tailwind CSS** cho tat ca styling, KHONG dung CSS modules hay styled-components
 - State management: **Zustand** — KHONG dung React Context hay Redux
 - Color palette dung cac ten tu tailwind.config.js: `ink`, `accent`, `paper`, `muted`, `hero`, etc.

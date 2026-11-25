@@ -103,6 +103,6 @@ npm run dev:server
 # 5. Chay frontend (tab khac)
 npm run dev:client
 
-# Truy cap: http://localhost:5173
+# Truy cap: http://localhost:3000
 ```
 
