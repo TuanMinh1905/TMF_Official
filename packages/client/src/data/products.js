@@ -1,0 +1,11 @@
+export const FALLBACK_PRODUCTS = [
+  { _id: 'f1', name: 'Áo thun Boxy Cotton', type: 'Áo thun', shape: 'tee', color: '#BA8E91', colors: ['#BA8E91', '#f4eee2', '#675247', '#292b30'], price: 249000, tag: 'NEW', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Áo thun boxy form rộng, chất cotton mềm, dễ phối đồ hàng ngày.' },
+  { _id: 'f2', name: 'Polo Knit Seoul', type: 'Áo thun', shape: 'polo', color: '#AAB59B', colors: ['#AAB59B', '#eae0c4', '#323943', '#adc2da'], price: 329000, tag: 'NEW', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Áo polo knit mang âm hưởng Seoul, cổ bẻ classic.' },
+  { _id: 'f3', name: 'Quần suông Daily', type: 'Quần', shape: 'jeans', color: '#9EACC1', colors: ['#9EACC1', '#bca48e', '#343c47', '#e3d9c9'], price: 449000, tag: 'BESTSELLER', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Quần suông daily fit, dễ mặc, dễ phối.' },
+  { _id: 'f4', name: 'Cardigan Soft Knit', type: 'Áo khoác', shape: 'cardigan', color: '#E6D6C3', colors: ['#E6D6C3', '#b3c5d8', '#cfafb9', '#827167'], price: 549000, oldPrice: 649000, tag: 'SALE', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Cardigan soft knit, dáng rộng thoải mái.' },
+  { _id: 'f5', name: 'Sơ mi Corduroy Relaxed', type: 'Áo sơ mi', shape: 'shirt', color: '#AAB59B', colors: ['#AAB59B', '#d4a8b0', '#866759', '#b5b2aa', '#455469'], price: 379000, tag: 'NEW', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Sơ mi corduroy relaxed fit, chất liệu dáng yêu.' },
+  { _id: 'f6', name: 'Quần tây Wide Fit', type: 'Quần', shape: 'jeans', color: '#B7A18D', colors: ['#B7A18D', '#686d76', '#e2d8c9', '#343536'], price: 499000, tag: '', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Quần tây wide fit, lịch sự nhưng thoải mái.' },
+  { _id: 'f7', name: 'Áo sơ mi Airy Oxford', type: 'Áo sơ mi', shape: 'shirt', color: '#9EACC1', colors: ['#9EACC1', '#e5d8e7', '#f3eee3', '#b5c9b7'], price: 399000, oldPrice: 499000, tag: 'SALE', sizes: ['S', 'M', 'L', 'XL'], gender: 'Unisex', description: 'Áo sơ mi oxford nhẹ nhàng, thoáng mát.' },
+  { _id: 'f8', name: 'Túi Canvas Weekend', type: 'Phụ kiện', shape: 'bag', color: '#927262', colors: ['#927262', '#eae0c4', '#536756'], price: 199000, tag: '', sizes: ['One size'], gender: 'Unisex', description: 'Túi canvas weekend, rộng rãi, tiện lợi.' },
+];
+
