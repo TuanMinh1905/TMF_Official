@@ -64,3 +64,4 @@
 2. **Update SUMMARY.md**: Cap nhat tinh nang moi, thay doi cau truc
 3. **Update RuleButton**: Cap nhat rules.js neu co section/logic moi
 4. **Update CODE_RULES.md**: Bo sung rule moi neu can
+
