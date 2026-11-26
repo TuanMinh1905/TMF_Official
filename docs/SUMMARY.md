@@ -11,7 +11,7 @@ TMF la website thuong mai dien tu thoi trang unisex phong cach Seoul Earth. Proj
 | Frontend | React 18 + Vite + Tailwind CSS v3 + Zustand + React Router |
 | Backend | Node.js + Express |
 | Database | MongoDB (Mongoose) |
-| Cache/Queue | Redis + BullMQ (chua tich hop) |
+| Cache/Queue | Redis + BullMQ + IORedis |
 | Container | Docker Compose (MongoDB + Redis) |
 | Monorepo | npm workspaces |
 
@@ -51,8 +51,17 @@ TMF_Official/
 │   └── server/               # Backend Express
 │       ├── src/
 │       │   ├── config/       # DB, Redis, env config
+│       │   │   ├── db.js     # MongoDB connection
+│       │   │   ├── env.js    # Bien moi truong
+│       │   │   └── redis.js  # IORedis connection (BullMQ)
+│       │   ├── queues/       # BullMQ queue definitions
+│       │   │   ├── orderQueue.js   # Queue "order-processing"
+│       │   │   └── emailQueue.js   # Queue "email-notification"
+│       │   ├── workers/      # BullMQ workers (xu ly bat dong bo)
+│       │   │   ├── orderWorker.js  # Xu ly don hang: pending → completed
+│       │   │   └── emailWorker.js  # Gui email xac nhan (console.log)
 │       │   ├── models/       # Product, Cart, Order, Outbox
-│       │   ├── controllers/  # CRUD logic
+│       │   ├── controllers/  # CRUD logic + queue dispatch
 │       │   ├── routes/       # API routes
 │       │   └── middleware/   # Error handler
 │       └── seed/             # Seed 8 san pham
@@ -119,9 +128,15 @@ TMF_Official/
 - [x] Seed data 8 san pham
 - [x] Docker Compose (MongoDB + Redis)
 - [x] Responsive mobile/desktop
+- [x] BullMQ Queue & Worker (Order Worker, Email Worker)
+- [x] Redis connection dung chung (IORedis)
+- [x] Order xu ly bat dong bo: pending → processing → completed
+- [x] Email xac nhan don hang (console.log gia lap)
+- [x] Retry mechanism (3 lan, exponential backoff)
+- [x] Graceful degradation khi Redis down
 
 ## Giai doan tiep theo
-- [ ] Giai doan 2: Queue & Worker (BullMQ, Order Worker, Email Worker)
+- [x] Giai doan 2: Queue & Worker (BullMQ, Order Worker, Email Worker)
 - [ ] Giai doan 3: Cron Job & Outbox (Nhac gio hang bo quen, Bao cao ngay)
 - [ ] Giai doan 4: Sandbox & Infra (Docker profiles, Sandbox mode)
 - [ ] Giai doan 5: Admin Dashboard

@@ -11,6 +11,10 @@ import cartRoutes from './routes/cartRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
+// Import workers — chay cung process voi API server
+import './workers/orderWorker.js';
+import './workers/emailWorker.js';
+
 const app = express();
 
 app.use(cors({ origin: config.clientUrl }));
@@ -30,6 +34,7 @@ app.use(errorHandler);
 connectDB().then(() => {
   app.listen(config.port, () => {
     console.log(`TMF Server chay tai port ${config.port}`);
+    console.log('[Workers] Order Worker + Email Worker dang chay');
   });
 });
 

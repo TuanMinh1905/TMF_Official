@@ -1,6 +1,7 @@
 import Cart from '../models/Cart.js';
 import Order from '../models/Order.js';
 import Outbox from '../models/Outbox.js';
+import { orderQueue } from '../queues/orderQueue.js';
 
 export async function createOrder(req, res, next) {
   try {
@@ -32,6 +33,15 @@ export async function createOrder(req, res, next) {
       eventType: 'ORDER_CREATED',
       payload: { orderId: order._id, orderNumber, customerEmail, totalAmount },
     });
+
+    // Day job vao queue de worker xu ly bat dong bo
+    try {
+      await orderQueue.add('process-order', { orderId: order._id.toString() });
+      console.log(`[API] Da day job vao queue cho don ${orderNumber}`);
+    } catch (queueErr) {
+      // Neu Redis loi, van tao order thanh cong (Outbox se xu ly lai o Giai doan 3)
+      console.warn(`[API] Khong the day job vao queue: ${queueErr.message}`);
+    }
 
     await Cart.findOneAndDelete({ sessionId });
     res.status(201).json({ success: true, data: order });

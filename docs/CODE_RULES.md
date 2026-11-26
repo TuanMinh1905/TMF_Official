@@ -60,7 +60,18 @@
 - Dung volume `mongo-data` de persist data
 - Port mac dinh: MongoDB 27017, Redis 6379
 
-## 8. Quy tac 4 viec sau moi task
+## 8. Queue & Worker rules
+- Dung **BullMQ** + **IORedis** cho queue system
+- Queue files dat trong `src/queues/`, Worker files dat trong `src/workers/`
+- Naming: queue file = `<ten>Queue.js` (camelCase), worker file = `<ten>Worker.js` (camelCase)
+- Redis connection dung chung tu `config/redis.js`, KHONG tao connection moi trong moi file
+- Worker import trong `index.js` de chay cung process voi API server
+- Job options mac dinh: `attempts: 3`, `backoff: exponential`, `removeOnComplete: 100`
+- Khi day job vao queue, PHAI try/catch de API khong crash neu Redis down
+- Order Worker: concurrency 1 (dam bao thu tu FIFO)
+- Email Worker: concurrency 3 (email gui song song duoc)
+
+## 9. Quy tac 4 viec sau moi task
 1. **Auto Push**: `git add . && git commit -m "mô tả tiếng Việt" && git push`
 2. **Update SUMMARY.md**: Cap nhat tinh nang moi, thay doi cau truc
 3. **Update RuleButton**: Cap nhat rules.js neu co section/logic moi

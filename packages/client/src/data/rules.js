@@ -47,5 +47,17 @@ export const SECTION_RULES = {
       'Giỏ hàng được lưu khi đóng trình duyệt.',
     ],
   },
+  orderQueue: {
+    title: 'Hệ thống Queue & Worker',
+    purpose: 'Xử lý đơn hàng bất đồng bộ qua BullMQ + Redis. Khi đặt hàng, API trả response ngay — Order Worker và Email Worker xử lý ở background.',
+    steps: [
+      'Khách đặt hàng → API tạo order (pending) và đẩy job vào Redis queue.',
+      'Order Worker nhận job → chuyển trạng thái pending → processing → completed.',
+      'Order Worker đẩy tiếp email job vào Email Queue.',
+      'Email Worker nhận job → gửi email xác nhận (hiện tại console.log giả lập).',
+      'Nếu worker crash, job vẫn nằm trong Redis — restart sẽ tự xử lý tiếp.',
+      'Nếu job fail, BullMQ tự retry tối đa 3 lần với exponential backoff.',
+    ],
+  },
 };
 
