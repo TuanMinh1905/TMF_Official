@@ -15,6 +15,28 @@ services:
     ports:
       - "6379:6379"
 
+  mongo-express:
+    image: mongo-express:1
+    container_name: tmf-mongo-express
+    profiles: ["dev"]
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://tmf-mongodb:27017/tmf
+      ME_CONFIG_BASICAUTH: "false"
+    depends_on:
+      - mongodb
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: tmf-redis-commander
+    profiles: ["dev"]
+    ports:
+      - "8082:8081"
+    environment:
+      REDIS_HOSTS: local:tmf-redis:6379
+    depends_on:
+      - redis
+
 volumes:
   mongo-data:
-

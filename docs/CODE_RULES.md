@@ -59,6 +59,7 @@
 - KHONG cai MongoDB/Redis truc tiep tren may
 - Dung volume `mongo-data` de persist data
 - Port mac dinh: MongoDB 27017, Redis 6379
+- Profile `dev`: Mongo Express (port 8081) va Redis Commander (port 8082), chay bang `npm run docker:dev`
 
 ## 8. Queue & Worker rules
 - Dung **BullMQ** + **IORedis** cho queue system
@@ -71,7 +72,20 @@
 - Order Worker: concurrency 1 (dam bao thu tu FIFO)
 - Email Worker: concurrency 3 (email gui song song duoc)
 
-## 9. Quy tac 4 viec sau moi task
+## 9. Sandbox, Middleware & Shutdown rules
+- Bat che do Sandbox qua bien moi truong `SANDBOX_MODE=true`; `sandboxMiddleware` chan moi thao tac ghi (chi cho phep GET)
+- `rateLimiter`: gioi han request theo IP trong bo nho bang `Map` (mac dinh 100 req / 60000ms), don dep entry het han dinh ky bang timer co `.unref()`
+- `requestLogger`: chi log format `[API] METHOD /path STATUS TIMEms` khi `NODE_ENV=development`
+- `setupGracefulShutdown(server, cronIntervals)`: lang nghe `SIGINT` va `SIGTERM`, dung cron intervals, dong HTTP server, Redis va MongoDB truoc khi thoat
+
+## 10. Cron Job & Outbox rules
+- Cron jobs dat trong `src/crons/`, naming camelCase (`outboxProcessor.js`, `abandonedCartCron.js`, `dailyReportCron.js`)
+- Moi cron export ham `start<Ten>()` (tra ve timer handle cho `setupGracefulShutdown`) va `get<Ten>Status()` de theo doi qua `/api/health`
+- Khoi dong cac cron trong `index.js` sau khi `connectDB()` thanh cong
+- Outbox Processor phai kiem tra trang thai Redis truoc khi day job, KHONG duoc lam crash server khi Redis down
+- Moi cron handler phai boc `try/catch` va co co che chong chay chong cheo
+
+## 11. Quy tac 4 viec sau moi task
 1. **Auto Push**: `git add . && git commit -m "mô tả tiếng Việt" && git push`
 2. **Update SUMMARY.md**: Cap nhat tinh nang moi, thay doi cau truc
 3. **Update RuleButton**: Cap nhat rules.js neu co section/logic moi

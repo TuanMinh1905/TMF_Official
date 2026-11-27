@@ -59,5 +59,26 @@ export const SECTION_RULES = {
       'Nếu job fail, BullMQ tự retry tối đa 3 lần với exponential backoff.',
     ],
   },
+  sandbox: {
+    title: 'Sandbox & Hạ tầng (Infra)',
+    purpose: 'Bảo vệ API và hỗ trợ phát triển: chế độ Sandbox chỉ đọc, giới hạn tốc độ truy cập (Rate Limiter), ghi log request dev, đóng kết nối an toàn (Graceful Shutdown) và Docker dev UI.',
+    steps: [
+      'Bật SANDBOX_MODE=true trong .env để chặn các thao tác ghi (POST/PUT/DELETE), chỉ cho phép GET.',
+      'Rate Limiter giới hạn tối đa 100 request/phút theo IP, trả về 429 khi vượt ngưỡng.',
+      'Request Logger tự động ghi log [API] METHOD /path STATUS TIMEms trong môi trường development.',
+      'Chạy npm run docker:dev để khởi động kèm Mongo Express (8081) và Redis Commander (8082).',
+      'Khi nhận SIGINT/SIGTERM, Graceful Shutdown dừng cron, đóng HTTP server, Redis và MongoDB an toàn.',
+    ],
+  },
+  cronOutbox: {
+    title: 'Hệ thống Cron Job & Outbox Pattern',
+    purpose: 'Đảm bảo không mất sự kiện khi Redis lỗi (Outbox Recovery), nhắc giỏ hàng bỏ quên và tổng hợp báo cáo ngày tự động.',
+    steps: [
+      'Outbox Processor quét các bản ghi pending mỗi 30 giây để đẩy lại vào queue hoặc xử lý sự kiện.',
+      'Abandoned Cart Cron quét giỏ hàng không hoạt động quá 30 phút (demo 60s/lần) và ghi sự kiện CART_ABANDONED vào Outbox.',
+      'Daily Report Cron tổng hợp số đơn, doanh thu, top sản phẩm (demo 2 phút/lần) qua Report Queue & Report Worker.',
+      'API /api/stats/dashboard và /api/stats/outbox cung cấp dữ liệu thống kê tổng quan và trạng thái Outbox.',
+    ],
+  },
 };
 

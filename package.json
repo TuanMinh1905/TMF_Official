@@ -11,7 +11,9 @@
     "build": "npm run build -w packages/client",
     "seed": "npm run seed -w packages/server",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "docker:dev": "docker-compose --profile dev up -d",
+    "docker:dev:down": "docker-compose --profile dev down",
+    "docker:logs": "docker-compose logs -f"
   }
 }
-
