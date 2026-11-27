@@ -1,0 +1,1 @@
+concepts.md : Lưu những khái niệm của riêng task đó. Ví dụ như v_teamplate là gì, v_shape là gì, middelware ở switch dog/cat là gì ?. Để khi nhìn lại có thể dễ search và hiểu workflow hơn

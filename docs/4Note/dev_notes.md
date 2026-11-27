@@ -1,0 +1,1 @@
+dev_notes.md : Lưu những thứ linh tinh khi phát hiện ra, như gh auth login

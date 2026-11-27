@@ -50,6 +50,15 @@ export async function createOrder(req, res, next) {
   }
 }
 
+export async function getOrders(req, res, next) {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: orders });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function getOrder(req, res, next) {
   try {
     const order = await Order.findById(req.params.id);

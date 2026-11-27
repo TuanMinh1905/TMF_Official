@@ -3,7 +3,7 @@
 > File nay mo ta tong quan he thong. Bat ky conversation nao doc file nay deu se hieu ro project.
 
 ## Tong quan
-TMF la website thuong mai dien tu thoi trang unisex phong cach Seoul Earth. Project duoc xay dung voi muc dich hoc tap cac concept backend nang cao: Infrastructure, Cron Job, Worker, Queue, Outbox Pattern, Sandbox.
+TMF la website thuong mai dien tu thoi trang unisex phong cach Seoul Earth. Project duoc xay dung voi muc dich hoc tap cac concept backend nang cao: Infrastructure, Cron Job, Worker, Queue, Outbox Pattern, Sandbox, Admin Dashboard.
 
 ## Tech Stack
 | Layer | Cong nghe |
@@ -12,15 +12,14 @@ TMF la website thuong mai dien tu thoi trang unisex phong cach Seoul Earth. Proj
 | Backend | Node.js + Express |
 | Database | MongoDB (Mongoose) |
 | Cache/Queue | Redis + BullMQ + IORedis |
-| Container | Docker Compose (MongoDB + Redis) |
+| Container | Docker Compose (MongoDB + Redis + Mongo Express + Redis Commander) |
 | Monorepo | npm workspaces |
 
 ## Cau truc thu muc
 ```
 TMF_Official/
-├── docker-compose.yml        # MongoDB + Redis
+├── docker-compose.yml        # MongoDB + Redis + dev tools (profiles)
 ├── package.json              # Root workspace
-├── .agent                    # Quy tac agent
 ├── .env / .env.example       # Bien moi truong
 ├── docs/
 │   ├── SUMMARY.md            # File nay
@@ -34,7 +33,7 @@ TMF_Official/
 │   │   │   │   ├── LookbookPage, WishlistPage
 │   │   │   │   ├── CartPage, CheckoutPage, SuccessPage
 │   │   │   │   ├── LoginPage, RegisterPage, AccountPage, OrdersPage
-│   │   │   │   └── AdminPage
+│   │   │   │   └── AdminPage                    # [GD5] Admin Dashboard
 │   │   │   ├── components/   # React components
 │   │   │   │   ├── layout/   # PromoBar, Navbar, RouteBar, Footer, ScrollToTop
 │   │   │   │   ├── home/     # Hero, PaletteStrip, Categories, Lookbook, Manifesto, Perks
@@ -42,7 +41,7 @@ TMF_Official/
 │   │   │   │   ├── cart/     # CartDrawer, CartRow, OrderSummary
 │   │   │   │   ├── product/  # ProductDetail, SizeSelector
 │   │   │   │   ├── account/  # AccountMenu, OrderCard
-│   │   │   │   ├── admin/    # StatCard, AdminNav, OrderTable, ProductTable, SystemPanel
+│   │   │   │   ├── admin/    # [GD5] StatCard, AdminNav, OrderTable, ProductTable, SystemPanel
 │   │   │   │   ├── search/   # SearchModal
 │   │   │   │   ├── ui/       # Modal, Toast, RuleButton
 │   │   │   │   └── svg/      # GarmentSVG, EditorialSVG
@@ -52,28 +51,39 @@ TMF_Official/
 │   │   └── ...config files
 │   └── server/               # Backend Express
 │       ├── src/
-│       │   ├── config/       # DB, Redis, env, sandbox, shutdown config
-│       │   │   ├── db.js       # MongoDB connection
-│       │   │   ├── env.js      # Bien moi truong
-│       │   │   ├── redis.js    # IORedis connection (BullMQ)
-│       │   │   ├── sandbox.js  # Sandbox mode (read-only middleware)
-│       │   │   └── shutdown.js # Graceful shutdown (SIGINT/SIGTERM)
+│       │   ├── config/       # DB, Redis, env, sandbox, shutdown
+│       │   │   ├── db.js     # MongoDB connection
+│       │   │   ├── env.js    # Bien moi truong
+│       │   │   ├── redis.js  # IORedis connection (BullMQ)
+│       │   │   ├── sandbox.js    # [GD4] Sandbox mode middleware
+│       │   │   └── shutdown.js   # [GD4] Graceful shutdown
+│       │   ├── crons/        # [GD3] Cron jobs dinh ky
+│       │   │   ├── outboxProcessor.js  # Quet Outbox pending moi 30s
+│       │   │   ├── abandonedCartCron.js # Gio hang bo quen moi 60s
+│       │   │   └── dailyReportCron.js   # Bao cao ngay moi 2 phut
 │       │   ├── queues/       # BullMQ queue definitions
 │       │   │   ├── orderQueue.js   # Queue "order-processing"
 │       │   │   ├── emailQueue.js   # Queue "email-notification"
-│       │   │   └── reportQueue.js  # Queue "daily-report"
+│       │   │   └── reportQueue.js  # [GD3] Queue "daily-report"
 │       │   ├── workers/      # BullMQ workers (xu ly bat dong bo)
 │       │   │   ├── orderWorker.js  # Xu ly don hang: pending → completed
 │       │   │   ├── emailWorker.js  # Gui email xac nhan (console.log)
-│       │   │   └── reportWorker.js # Tao bao cao ngay tu reportQueue
-│       │   ├── crons/        # Cron jobs (setInterval)
-│       │   │   ├── outboxProcessor.js   # Quet Outbox pending moi 30s
-│       │   │   ├── abandonedCartCron.js # Phat hien gio hang bo quen > 30p
-│       │   │   └── dailyReportCron.js   # Bao cao doanh thu/don hang ngay
+│       │   │   └── reportWorker.js # [GD3] Tao bao cao ngay
 │       │   ├── models/       # Product, Cart, Order, Outbox
 │       │   ├── controllers/  # CRUD logic + queue dispatch + stats
-│       │   ├── routes/       # API routes (products, cart, orders, stats)
-│       │   └── middleware/   # Error handler, rateLimiter, requestLogger
+│       │   │   ├── productController.js
+│       │   │   ├── cartController.js
+│       │   │   ├── orderController.js
+│       │   │   └── statsController.js  # [GD3] Dashboard stats + Outbox status
+│       │   ├── routes/       # API routes
+│       │   │   ├── productRoutes.js
+│       │   │   ├── cartRoutes.js
+│       │   │   ├── orderRoutes.js
+│       │   │   └── statsRoutes.js      # [GD3] /api/stats/*
+│       │   └── middleware/   # Error handler, rate limiter, request logger
+│       │       ├── errorHandler.js
+│       │       ├── rateLimiter.js      # [GD4] In-memory rate limiter
+│       │       └── requestLogger.js    # [GD4] Dev request logger
 │       └── seed/             # Seed 8 san pham
 ```
 
@@ -92,12 +102,12 @@ TMF_Official/
 | /account | AccountPage | Thong tin ca nhan + don hang gan day |
 | /orders | OrdersPage | Danh sach don hang + timeline tracking |
 | /success | SuccessPage | Xac nhan dat hang thanh cong |
-| /admin | AdminPage | Trang quan tri (Tong quan, Don hang, San pham, He thong) |
+| /admin | AdminPage | [GD5] Admin Dashboard (4 tabs: tong quan, don hang, san pham, he thong) |
 
 ## API Endpoints
 | Method | Endpoint | Mo ta |
 |--------|----------|-------|
-| GET | /api/health | Health check |
+| GET | /api/health | Health check + cron status + sandbox mode |
 | GET | /api/products | Danh sach san pham (filter: type, gender, search, sort, tag) |
 | GET | /api/products/:id | Chi tiet san pham |
 | POST | /api/cart | Them vao gio hang |
@@ -105,22 +115,23 @@ TMF_Official/
 | PUT | /api/cart/:sessionId/items/:itemId | Cap nhat so luong |
 | DELETE | /api/cart/:sessionId/items/:itemId | Xoa san pham khoi gio |
 | POST | /api/orders | Dat hang |
+| GET | /api/orders | [GD5] Danh sach tat ca don hang |
 | GET | /api/orders/:id | Xem don hang |
-| GET | /api/stats/dashboard | Thong ke tong quan (san pham, don hang, doanh thu, trang thai) |
-| GET | /api/stats/outbox | Danh sach ban ghi Outbox nhom theo trang thai |
+| GET | /api/stats/dashboard | [GD3] Thong ke tong quan (products, orders, revenue, by status) |
+| GET | /api/stats/outbox | [GD3] Trang thai Outbox (grouped by status) |
 
 ## Zustand Stores
 | Store | Chuc nang |
-|-------|-----------|
+|-------|-----------| 
 | productStore | products[], fetchProducts(), filter, sort, search, favorites, getFiltered() |
 | cartStore | items[], addItem(), removeItem(), updateQty(), clearCart(), getCount(), getSubtotal() |
 | uiStore | productDetailId, searchOpen, toast, openProductDetail(), showToast() |
 | authStore | user, login(), register(), logout(), updateProfile(), isLoggedIn() |
-| adminStore | stats, orders, products, outbox, activeTab, fetchStats(), fetchOrders(), fetchProducts(), fetchOutbox() |
+| adminStore | [GD5] stats, orders, products, outbox, activeTab, fetchStats/Orders/Products/Outbox() |
 
 ## Tinh nang da hoan thanh
 - [x] Landing page day du theo design FORM. Seoul Earth V3
-- [x] Multi-page SPA voi React Router (12 trang tu design V4)
+- [x] Multi-page SPA voi React Router (13 trang tu design V4 + admin)
 - [x] Product catalog voi sidebar filter (danh muc, gia, mau sac, search)
 - [x] Product detail page (doi mau, chon size, accordion, related products)
 - [x] Lookbook page (3 editorial looks)
@@ -140,7 +151,7 @@ TMF_Official/
 - [x] Backend REST API (Products, Cart, Orders)
 - [x] Outbox model (san sang cho giai doan sau)
 - [x] Seed data 8 san pham
-- [x] Docker Compose (MongoDB + Redis + profile dev: Mongo Express, Redis Commander)
+- [x] Docker Compose (MongoDB + Redis)
 - [x] Responsive mobile/desktop
 - [x] BullMQ Queue & Worker (Order Worker, Email Worker)
 - [x] Redis connection dung chung (IORedis)
@@ -148,26 +159,47 @@ TMF_Official/
 - [x] Email xac nhan don hang (console.log gia lap)
 - [x] Retry mechanism (3 lan, exponential backoff)
 - [x] Graceful degradation khi Redis down
-- [x] Outbox Processor (quet Outbox pending moi 30s, khoi phuc ORDER_CREATED khi Redis phuc hoi)
-- [x] Abandoned Cart Cron (phat hien gio hang > 30 phut, tao su kien CART_ABANDONED trong Outbox)
-- [x] Daily Report Cron + Report Queue/Worker (thong ke don hang, doanh thu, top san pham)
-- [x] Admin Stats API (`/api/stats/dashboard`, `/api/stats/outbox`) va `/api/health` cron status
-- [x] Sandbox Mode (read-only middleware qua SANDBOX_MODE)
-- [x] In-memory Rate Limiter middleware (Map theo IP, 429 khi vuot nguong)
-- [x] Request Logger middleware ([API] METHOD /path STATUS TIMEms trong dev)
-- [x] Graceful Shutdown (SIGINT/SIGTERM dong HTTP, cron, Redis, MongoDB)
+
+### Giai doan 3: Cron Job & Outbox ✅
+- [x] Outbox Processor — quet Outbox pending moi 30s, day lai job vao queue
+- [x] Abandoned Cart Cron — phat hien gio hang bo quen (>30 phut), tao Outbox event
+- [x] Daily Report Cron — tong hop don hang, doanh thu, top san pham (2 phut/lan demo)
+- [x] Report Queue & Report Worker — xu ly bao cao qua BullMQ
+- [x] Stats API — /api/stats/dashboard (thong ke tong quan), /api/stats/outbox (outbox status)
+- [x] Orders list API — GET /api/orders (danh sach tat ca don hang)
+
+### Giai doan 4: Sandbox & Infra ✅
+- [x] Docker Compose profiles — dev profile voi Mongo Express (8081) va Redis Commander (8082)
+- [x] Sandbox Mode — SANDBOX_MODE=true chan POST/PUT/DELETE, chi cho GET
+- [x] Rate Limiter — in-memory, 100 req/phut/IP, tra 429 khi vuot nguong
+- [x] Request Logger — [API] METHOD /path STATUS TIMEms (chi development)
+- [x] Graceful Shutdown — SIGINT/SIGTERM dong cron, HTTP, Redis, MongoDB an toan
+- [x] .env.example — mau bien moi truong day du
+- [x] npm scripts moi: docker:dev, docker:dev:down, docker:logs
+
+### Giai doan 5: Admin Dashboard ✅
+- [x] Admin page (/admin) — 4 tabs: Tong quan, Don hang, San pham, He thong
+- [x] Stat cards — tong san pham, don hang, doanh thu, don hoan thanh
+- [x] Order table — sortable, expandable rows, status badges (mau theo trang thai)
+- [x] Product table — danh sach san pham, trang thai kho (con/het hang)
+- [x] System panel — Outbox monitor, Cron Job info, Queue & Worker info
+- [x] Admin store (Zustand) — fetchStats, fetchOrders, fetchProducts, fetchOutbox
+- [x] Admin nav link tren Navbar (icon gear)
+- [x] RuleButton cho admin, cronJobs, sandbox sections
 
 ## Giai doan tiep theo
 - [x] Giai doan 2: Queue & Worker (BullMQ, Order Worker, Email Worker)
-- [x] Giai doan 3: Cron Job & Outbox (Nhac gio hang bo quen, Bao cao ngay)
-- [x] Giai doan 4: Sandbox & Infra (Docker profiles, Sandbox mode, Rate Limiter, Request Logger, Graceful Shutdown)
-- [x] Giai doan 5: Admin Dashboard (Frontend) — AdminPage, adminStore, StatCard, AdminNav, OrderTable, ProductTable, SystemPanel
+- [x] Giai doan 3: Cron Job & Outbox (Outbox Processor, Abandoned Cart, Daily Report)
+- [x] Giai doan 4: Sandbox & Infra (Docker profiles, Sandbox mode, Rate Limiter, Graceful Shutdown)
+- [x] Giai doan 5: Admin Dashboard (4 tabs, stats, orders, products, system monitoring)
 
 ## Cach chay
 ```bash
-# 1. Start MongoDB + Redis (hoac dung docker:dev de mo them Mongo Express 8081 & Redis Commander 8082)
-npm run docker:up
-# npm run docker:dev
+# 1. Start MongoDB + Redis
+docker-compose up -d
+
+# 1b. (Optional) Start voi dev tools: Mongo Express + Redis Commander
+npm run docker:dev
 
 # 2. Cai dependencies
 npm install
@@ -182,4 +214,7 @@ npm run dev:server
 npm run dev:client
 
 # Truy cap: http://localhost:3000
+# Admin:   http://localhost:3000/admin
+# Mongo Express (dev): http://localhost:8081
+# Redis Commander (dev): http://localhost:8082
 ```

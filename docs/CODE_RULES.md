@@ -5,21 +5,25 @@
 ## 1. Cau truc project
 - Monorepo voi npm workspaces: `packages/client`, `packages/server`
 - KHONG tao file/folder ngoai cau truc da dinh
-- Moi component React nam trong thu muc tuong ung: layout/, home/, shop/, cart/, product/, account/, admin/, search/, ui/, svg/
+- Moi component React nam trong thu muc tuong ung: layout/, home/, shop/, cart/, product/, search/, ui/, svg/, admin/
 - Backend theo pattern: routes → controllers → models
 
 ## 2. Naming conventions
 ### Files & Folders
-- Component React: **PascalCase** (VD: `ProductCard.jsx`, `GarmentSVG.jsx`)
-- Store Zustand: **camelCase** + hau to `Store` (VD: `cartStore.js`, `productStore.js`)
+- Component React: **PascalCase** (VD: `ProductCard.jsx`, `GarmentSVG.jsx`, `AdminNav.jsx`)
+- Store Zustand: **camelCase** + hau to `Store` (VD: `cartStore.js`, `adminStore.js`)
 - Backend models: **PascalCase** (VD: `Product.js`, `Cart.js`)
-- Backend routes/controllers: **camelCase** + hau to tuong ung (VD: `productRoutes.js`, `cartController.js`)
+- Backend routes/controllers: **camelCase** + hau to tuong ung (VD: `productRoutes.js`, `statsController.js`)
+- Cron jobs: **camelCase** + hau to `Cron` (VD: `abandonedCartCron.js`, `dailyReportCron.js`)
+- Ngoai le: `outboxProcessor.js` (processor, khong phai cron thuan tuy)
 - Utils/helpers: **camelCase** (VD: `format.js`)
 - Data files: **camelCase** (VD: `products.js`, `rules.js`)
+- Config files: **camelCase** (VD: `sandbox.js`, `shutdown.js`)
+- Middleware: **camelCase** (VD: `rateLimiter.js`, `requestLogger.js`)
 
 ### Variables & Functions
-- Bien va ham: **camelCase** (VD: `formatPrice`, `getProducts`)
-- Component: **PascalCase** (VD: `ProductCard`, `Hero`)
+- Bien va ham: **camelCase** (VD: `formatPrice`, `getProducts`, `fetchStats`)
+- Component: **PascalCase** (VD: `ProductCard`, `StatCard`, `SystemPanel`)
 - Constants: **UPPER_SNAKE_CASE** (VD: `FALLBACK_PRODUCTS`, `SECTION_RULES`)
 - API response: `{ success: true/false, data/message }`
 
@@ -32,12 +36,13 @@
 - Moi section PHAI co **RuleButton** de mo ta quy tac
 - Responsive: mobile-first, dung Tailwind responsive prefixes (md:, lg:)
 - Product data lay tu store (fetch API hoac fallback)
+- Admin components dat trong `components/admin/`
 
 ## 4. Backend rules
 - ES Modules (`import/export`), KHONG dung CommonJS (`require`)
 - Tat ca route handlers dung `async/await` voi try/catch va `next(err)`
 - Error handler middleware xu ly loi tap trung
-- API prefix: `/api/` (VD: `/api/products`, `/api/cart`)
+- API prefix: `/api/` (VD: `/api/products`, `/api/cart`, `/api/stats/dashboard`)
 - dotenv config load tu file `../../.env` (tuong doi tu packages/server/)
 - Mongoose models export default
 
@@ -59,7 +64,8 @@
 - KHONG cai MongoDB/Redis truc tiep tren may
 - Dung volume `mongo-data` de persist data
 - Port mac dinh: MongoDB 27017, Redis 6379
-- Profile `dev`: Mongo Express (port 8081) va Redis Commander (port 8082), chay bang `npm run docker:dev`
+- Dev profile: Mongo Express (8081), Redis Commander (8082)
+- Chay dev tools: `npm run docker:dev`
 
 ## 8. Queue & Worker rules
 - Dung **BullMQ** + **IORedis** cho queue system
@@ -71,23 +77,30 @@
 - Khi day job vao queue, PHAI try/catch de API khong crash neu Redis down
 - Order Worker: concurrency 1 (dam bao thu tu FIFO)
 - Email Worker: concurrency 3 (email gui song song duoc)
+- Report Worker: concurrency 1 (bao cao chay tuan tu)
 
-## 9. Sandbox, Middleware & Shutdown rules
-- Bat che do Sandbox qua bien moi truong `SANDBOX_MODE=true`; `sandboxMiddleware` chan moi thao tac ghi (chi cho phep GET)
-- `rateLimiter`: gioi han request theo IP trong bo nho bang `Map` (mac dinh 100 req / 60000ms), don dep entry het han dinh ky bang timer co `.unref()`
-- `requestLogger`: chi log format `[API] METHOD /path STATUS TIMEms` khi `NODE_ENV=development`
-- `setupGracefulShutdown(server, cronIntervals)`: lang nghe `SIGINT` va `SIGTERM`, dung cron intervals, dong HTTP server, Redis va MongoDB truoc khi thoat
+## 9. Cron Job rules
+- Cron files dat trong `src/crons/`
+- Dung `setInterval` cho demo (production se dung cron library)
+- Moi cron export ham `start<Ten>()` tra ve interval ID va `get<Ten>Status()` tra ve trang thai
+- Cron duoc khoi dong trong `index.js` sau khi DB ket noi
+- Interval IDs truyen vao `setupGracefulShutdown()` de cleanup
+- Dung co `isScanning`/`isChecking` de tranh overlap giua cac lan chay
+- Log prefix: `[Ten Cron]` (VD: `[Outbox Processor]`, `[Abandoned Cart]`, `[Daily Report]`)
 
-## 10. Cron Job & Outbox rules
-- Cron jobs dat trong `src/crons/`, naming camelCase (`outboxProcessor.js`, `abandonedCartCron.js`, `dailyReportCron.js`)
-- Moi cron export ham `start<Ten>()` (tra ve timer handle cho `setupGracefulShutdown`) va `get<Ten>Status()` de theo doi qua `/api/health`
-- Khoi dong cac cron trong `index.js` sau khi `connectDB()` thanh cong
-- Outbox Processor phai kiem tra trang thai Redis truoc khi day job, KHONG duoc lam crash server khi Redis down
-- Moi cron handler phai boc `try/catch` va co co che chong chay chong cheo
+## 10. Middleware rules
+- Middleware files dat trong `src/middleware/`
+- Rate limiter: in-memory Map, mac dinh 100 req/phut/IP
+- Request logger: chi chay o NODE_ENV=development
+- Sandbox middleware: check SANDBOX_MODE env, chan POST/PUT/DELETE
 
-## 11. Quy tac 4 viec sau moi task
+## 11. Infra rules
+- Graceful shutdown: xu ly SIGINT + SIGTERM, dong cron → HTTP → Redis → MongoDB
+- Sandbox mode: bat/tat qua bien moi truong SANDBOX_MODE=true/false
+- .env.example luon cap nhat khi them bien moi truong moi
+
+## 12. Quy tac 4 viec sau moi task
 1. **Auto Push**: `git add . && git commit -m "mô tả tiếng Việt" && git push`
 2. **Update SUMMARY.md**: Cap nhat tinh nang moi, thay doi cau truc
 3. **Update RuleButton**: Cap nhat rules.js neu co section/logic moi
 4. **Update CODE_RULES.md**: Bo sung rule moi neu can
-
