@@ -29,11 +29,12 @@ TMF_Official/
 ├── packages/
 │   ├── client/               # Frontend React
 │   │   ├── src/
-│   │   │   ├── pages/        # 12 page components (SPA routing)
+│   │   │   ├── pages/        # 13 page components (SPA routing)
 │   │   │   │   ├── HomePage, CatalogPage, ProductPage
 │   │   │   │   ├── LookbookPage, WishlistPage
 │   │   │   │   ├── CartPage, CheckoutPage, SuccessPage
-│   │   │   │   └── LoginPage, RegisterPage, AccountPage, OrdersPage
+│   │   │   │   ├── LoginPage, RegisterPage, AccountPage, OrdersPage
+│   │   │   │   └── AdminPage
 │   │   │   ├── components/   # React components
 │   │   │   │   ├── layout/   # PromoBar, Navbar, RouteBar, Footer, ScrollToTop
 │   │   │   │   ├── home/     # Hero, PaletteStrip, Categories, Lookbook, Manifesto, Perks
@@ -41,10 +42,11 @@ TMF_Official/
 │   │   │   │   ├── cart/     # CartDrawer, CartRow, OrderSummary
 │   │   │   │   ├── product/  # ProductDetail, SizeSelector
 │   │   │   │   ├── account/  # AccountMenu, OrderCard
+│   │   │   │   ├── admin/    # StatCard, AdminNav, OrderTable, ProductTable, SystemPanel
 │   │   │   │   ├── search/   # SearchModal
 │   │   │   │   ├── ui/       # Modal, Toast, RuleButton
 │   │   │   │   └── svg/      # GarmentSVG, EditorialSVG
-│   │   │   ├── store/        # Zustand stores (cart, product, ui, auth)
+│   │   │   ├── store/        # Zustand stores (cart, product, ui, auth, admin)
 │   │   │   ├── data/         # Fallback products, section rules
 │   │   │   └── utils/        # Format helpers
 │   │   └── ...config files
@@ -90,6 +92,7 @@ TMF_Official/
 | /account | AccountPage | Thong tin ca nhan + don hang gan day |
 | /orders | OrdersPage | Danh sach don hang + timeline tracking |
 | /success | SuccessPage | Xac nhan dat hang thanh cong |
+| /admin | AdminPage | Trang quan tri (Tong quan, Don hang, San pham, He thong) |
 
 ## API Endpoints
 | Method | Endpoint | Mo ta |
@@ -113,6 +116,7 @@ TMF_Official/
 | cartStore | items[], addItem(), removeItem(), updateQty(), clearCart(), getCount(), getSubtotal() |
 | uiStore | productDetailId, searchOpen, toast, openProductDetail(), showToast() |
 | authStore | user, login(), register(), logout(), updateProfile(), isLoggedIn() |
+| adminStore | stats, orders, products, outbox, activeTab, fetchStats(), fetchOrders(), fetchProducts(), fetchOutbox() |
 
 ## Tinh nang da hoan thanh
 - [x] Landing page day du theo design FORM. Seoul Earth V3
@@ -157,7 +161,7 @@ TMF_Official/
 - [x] Giai doan 2: Queue & Worker (BullMQ, Order Worker, Email Worker)
 - [x] Giai doan 3: Cron Job & Outbox (Nhac gio hang bo quen, Bao cao ngay)
 - [x] Giai doan 4: Sandbox & Infra (Docker profiles, Sandbox mode, Rate Limiter, Request Logger, Graceful Shutdown)
-- [ ] Giai doan 5: Admin Dashboard
+- [x] Giai doan 5: Admin Dashboard (Frontend) — AdminPage, adminStore, StatCard, AdminNav, OrderTable, ProductTable, SystemPanel
 
 ## Cach chay
 ```bash

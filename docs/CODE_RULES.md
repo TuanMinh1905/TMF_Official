@@ -5,7 +5,7 @@
 ## 1. Cau truc project
 - Monorepo voi npm workspaces: `packages/client`, `packages/server`
 - KHONG tao file/folder ngoai cau truc da dinh
-- Moi component React nam trong thu muc tuong ung: layout/, home/, shop/, cart/, product/, search/, ui/, svg/
+- Moi component React nam trong thu muc tuong ung: layout/, home/, shop/, cart/, product/, account/, admin/, search/, ui/, svg/
 - Backend theo pattern: routes → controllers → models
 
 ## 2. Naming conventions

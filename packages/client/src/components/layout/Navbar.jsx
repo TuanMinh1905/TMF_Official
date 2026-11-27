@@ -50,6 +50,15 @@ export default function Navbar() {
           </svg>
           <span className="text-xs">{cartCount}</span>
         </Link>
+        <Link
+          to="/admin"
+          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold border border-black/15 hover:border-accent hover:text-accent transition-colors"
+          aria-label="Trang quản trị"
+          title="Admin Dashboard"
+        >
+          <span aria-hidden="true">⚙</span>
+          <span className="hidden sm:inline">Admin</span>
+        </Link>
       </div>
     </header>
   );

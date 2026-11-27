@@ -22,6 +22,7 @@ import RegisterPage from './pages/RegisterPage';
 import AccountPage from './pages/AccountPage';
 import OrdersPage from './pages/OrdersPage';
 import SuccessPage from './pages/SuccessPage';
+import AdminPage from './pages/AdminPage';
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/account" element={<AccountPage />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/success" element={<SuccessPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </main>
       <Perks />

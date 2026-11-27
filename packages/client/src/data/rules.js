@@ -80,5 +80,24 @@ export const SECTION_RULES = {
       'API /api/stats/dashboard và /api/stats/outbox cung cấp dữ liệu thống kê tổng quan và trạng thái Outbox.',
     ],
   },
+  admin: {
+    title: 'Trang quản trị — Admin Dashboard',
+    purpose: 'Bảng điều khiển dành cho quản trị viên. Xem tổng quan hệ thống, quản lý đơn hàng, sản phẩm, và theo dõi các tiến trình nền (Queue, Cron, Outbox).',
+    steps: [
+      'Tab Tổng quan: Xem thống kê nhanh — tổng sản phẩm, đơn hàng, doanh thu.',
+      'Tab Đơn hàng: Danh sách đơn hàng, click để xem chi tiết từng đơn.',
+      'Tab Sản phẩm: Quản lý kho hàng, trạng thái tồn kho.',
+      'Tab Hệ thống: Theo dõi Outbox, Queue, Cron Job đang chạy.',
+    ],
+  },
+  cronJobs: {
+    title: 'Hệ thống Cron Job',
+    purpose: 'Các tác vụ chạy định kỳ: Outbox Processor (30s), Nhắc giỏ hàng bỏ quên (60s), Báo cáo ngày (2 phút). Trong production, thời gian sẽ dài hơn.',
+    steps: [
+      'Outbox Processor: Quét bảng Outbox mỗi 30 giây, đẩy lại job thất bại vào queue.',
+      'Abandoned Cart: Tìm giỏ hàng bỏ quên (>30 phút không cập nhật), gửi nhắc nhở.',
+      'Daily Report: Tổng hợp doanh thu, đơn hàng, sản phẩm bán chạy.',
+    ],
+  },
 };
 
